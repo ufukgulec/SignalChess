@@ -1,0 +1,61 @@
+﻿@page "/"
+
+<MudGrid>
+    <MudItem xs="8">
+        <MudDropContainer @ref="MudDropContainer" T="DropItem" Items="_items" CanDropClass="mud-border-info" NoDropClass="mud-border-error" CanDrop="@( (item,identifier ) => _items.Count(x => x.Identifier == identifier ) == 0)" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="border-2 border-solid mud-border-lines-default">
+            <ChildContent>
+                @for (int r = 0; r < 8; r++)
+                {
+                    var row = r.ToString();
+                    <div class="d-flex">
+                        @for (int c = 0; c < 8; c++)
+                        {
+                            var col = c.ToString();
+                            <MudDropZone T="DropItem" Identifier="@($"{row}{col}")" DraggingClass="mud-theme-success" Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="height:64px;width:64px;" />
+                        }
+                    </div>
+                }
+            </ChildContent>
+            <ItemRenderer>
+                <div class="d-flex justify-center align-center flex-grow-1">
+                    <MudIcon Icon="@context.Icon" Color="@context.Color" Size="Size.Large" />
+                </div>
+            </ItemRenderer>
+        </MudDropContainer>
+    </MudItem>
+    <MudItem xs="4">
+        <MudTextField @bind-Value="userInput"
+                      Label="Kullanıcı Adı"
+                      Variant="Variant.Outlined"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.People"
+                      AdornmentColor="Color.Secondary" />
+        <MudTextField @bind-Value="messageInput"
+                      Label="Mesaj"
+                      Variant="Variant.Outlined"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Message"
+                      AdornmentColor="Color.Secondary" />
+        <MudButton OnClick="Send" Color="Color.Secondary" Disabled="@(!IsConnected)" FullWidth>Gönder</MudButton>
+
+        <MudSimpleTable Style="overflow-x: auto;">
+            <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Kullanıcı</th>
+                    <th>Mesaj</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in messages)
+                {
+                    <tr>
+                        <td>@row.DateTime.ToString("dd/MM/yyyy hh:mm")</td>
+                        <td>@row.Username</td>
+                        <td>@row.Message</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    </MudItem>
+</MudGrid>
